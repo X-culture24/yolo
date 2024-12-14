@@ -1,44 +1,20 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: backend-deployment
-  labels:
-    app: backend
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: backend
-  template:
-    metadata:
-      labels:
-        app: backend
-    spec:
-      containers:
-        - name: backend
-          image: brianbwire/brian-yolo-backend:v1.0.0
-          command: ["npm", "start"] 
-          ports:
-            - containerPort: 5000
-          resources:
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-spec:
-  type: LoadBalancer
-  selector:
-    app: backend
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
-      nodePort: 30100
-  
+# Use the official Node.js image as the base
+FROM node:18-alpine
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json first for dependency installation
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application files
+COPY . .
+
+# Expose the backend port (must match containerPort in Kubernetes)
+EXPOSE 5000
+
+# Command to run the application
+CMD ["npm", "start"]
