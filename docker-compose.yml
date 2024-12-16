@@ -1,13 +1,4 @@
 version: '3.8'
-<<<<<<< HEAD
-services:
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"  # Map Nginx port to localhost
-=======
 
 services:
   ecommerce-frontend:
@@ -16,32 +7,10 @@ services:
       dockerfile: Dockerfile
     container_name: ecommerce_frontend
     ports:
-      - "3000:3000"  #
->>>>>>> d04f83b (Initial commit of the Yolo Ecommerce project with frontend and backend Docker setup)
+      - "3000:3000"  
     depends_on:
       - ecommerce-backend
 
-<<<<<<< HEAD
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"  # Map backend port
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:latest
-    container_name: mongo
-    ports:
-      - "27017:27017"  # Map MongoDB port
-    volumes:
-      - mongo_data:/data/db
-
-volumes:
-  mongo_data:
-=======
   ecommerce-backend:
     build:
       context: ./backend
@@ -50,9 +19,14 @@ volumes:
     ports:
       - "5000:5000" 
     environment:
-      MONGO_URL: mongodb://ecommerce-mongo:27018/ecommerce 
+      MONGO_URL: mongodb://ecommerce-mongo:27018/ecommerce
     depends_on:
       - ecommerce-mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   ecommerce-mongo:
     image: mongo:5.0
@@ -64,4 +38,4 @@ volumes:
 
 volumes:
   ecommerce_mongo_data:
->>>>>>> d04f83b (Initial commit of the Yolo Ecommerce project with frontend and backend Docker setup)
+
